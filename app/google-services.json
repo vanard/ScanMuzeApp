@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "project_number": "239207423254",
+    "firebase_url": "https://tulis-9b6a8.firebaseio.com",
+    "project_id": "tulis-9b6a8",
+    "storage_bucket": "tulis-9b6a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239207423254:android:576eb1b8dc98a9e51a4437",
+        "android_client_info": {
+          "package_name": "com.vanard.faktanyus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239207423254-ahg75ofjvu9buhg5nk7ok7l3oj0udi4t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vanard.faktanyus",
+            "certificate_hash": "5a13efeea3ad6f8b1f80875f2fee131399b86da2"
+          }
+        },
+        {
+          "client_id": "239207423254-k8ejh3bvsdg8b7gdtcsasg91aqpamp9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt7hXdHsNwr76yD37yhOUsVsaUqFKzeO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239207423254-k8ejh3bvsdg8b7gdtcsasg91aqpamp9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239207423254:android:918c54aec54fe5d41a4437",
+        "android_client_info": {
+          "package_name": "com.vanard.muze"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239207423254-t252qk39lbrvrdkds5mqq31ep6tb0p1k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vanard.muze",
+            "certificate_hash": "5a13efeea3ad6f8b1f80875f2fee131399b86da2"
+          }
+        },
+        {
+          "client_id": "239207423254-k8ejh3bvsdg8b7gdtcsasg91aqpamp9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt7hXdHsNwr76yD37yhOUsVsaUqFKzeO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239207423254-k8ejh3bvsdg8b7gdtcsasg91aqpamp9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239207423254:android:7db68f4ea786ffff",
+        "android_client_info": {
+          "package_name": "com.vanard.tulis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239207423254-ej1o5cv8rvl1j4r850upcmkc488o3q3g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vanard.tulis",
+            "certificate_hash": "a5bcb7e614bfd4516fa534a93a8d7e3735e12a25"
+          }
+        },
+        {
+          "client_id": "239207423254-k8ejh3bvsdg8b7gdtcsasg91aqpamp9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt7hXdHsNwr76yD37yhOUsVsaUqFKzeO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239207423254-k8ejh3bvsdg8b7gdtcsasg91aqpamp9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
