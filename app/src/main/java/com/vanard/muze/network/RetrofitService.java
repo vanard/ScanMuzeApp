@@ -8,5 +8,8 @@ import retrofit2.http.Query;
 
 public interface RetrofitService {
     @GET("searchGET")
-    Call<DataMuseum> getDataMuseum(@Query("nama") String museumName);
+    Call<DataMuseum> getSearchMuseumByName(@Query("nama") String museumName);
+
+    @GET("searchGET")
+    Call<DataMuseum> getDataMuseum();
 }

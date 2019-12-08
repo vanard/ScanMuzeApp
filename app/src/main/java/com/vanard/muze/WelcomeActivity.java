@@ -42,6 +42,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private RetrofitService retrofitClient;
     private ProgressDialog dialog;
     private DataUser user;
+    private String museumId, museumName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,12 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void setUp() {
+        if (getIntent() != null) {
+            museumId = getIntent().getStringExtra("_id");
+            museumName = getIntent().getStringExtra("name");
+        }else
+            finish();
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         dialog = new ProgressDialog(this);
@@ -107,13 +114,20 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void requestData() {
-        Call<DataMuseum> museumCall = retrofitClient.getDataMuseum("museum");
+        Call<DataMuseum> museumCall = retrofitClient.getSearchMuseumByName(museumName);
         museumCall.enqueue(new Callback<DataMuseum>() {
             @Override
             public void onResponse(Call<DataMuseum> call, Response<DataMuseum>
                     response) {
                 List<DataItem> dataItems = response.body().getData();
-                setInitData(dataItems.get(0));
+//                Log.d(TAG, "onResponse: "+dataItems);
+                for (DataItem item: dataItems) {
+                    if (item.getMuseumId().equals(museumId)) {
+                        setInitData(item);
+                        break;
+                    }
+                }
+
             }
 
             @Override

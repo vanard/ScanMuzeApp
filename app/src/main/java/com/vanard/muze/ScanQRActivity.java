@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,9 +24,18 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.vanard.muze.model.DataItem;
+import com.vanard.muze.model.DataMuseum;
 import com.vanard.muze.model.DataUser;
+import com.vanard.muze.network.RetrofitClient;
+import com.vanard.muze.network.RetrofitService;
+
+import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ScanQRActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private static final String TAG = "ScanQRActivity";
@@ -38,6 +48,10 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
 
     private DataUser user;
     private ProgressDialog dialog;
+    private RetrofitService retrofitClient;
+    private String museumId;
+    private Boolean museumValid = false;
+    private DataItem dataItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +70,7 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
             getSupportActionBar().setTitle("Scan QR Code");
         }
 
+        retrofitClient = RetrofitClient.getRetrofitInstance().create(RetrofitService.class);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         dialog = new ProgressDialog(this);
@@ -131,24 +146,72 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
     public void handleResult(Result rawResult) {
         scan = rawResult.getText();
         Log.d(TAG, "handleResult: "+scan);
+        museumId = scan.trim();
 
-        checkDb();
+        dialog.show();
+        requestData();
+    }
+
+    private void requestData() {
+        Call<DataMuseum> museumCall = retrofitClient.getDataMuseum();
+        museumCall.enqueue(new Callback<DataMuseum>() {
+            @Override
+            public void onResponse(Call<DataMuseum> call, Response<DataMuseum>
+                    response) {
+
+                if (response.isSuccessful()) {
+                    List<DataItem> dataItems = response.body().getData();
+
+                    for (DataItem item : dataItems) {
+                        if (item.getMuseumId().trim().equals(museumId)) {
+                            checkDb();
+                            dataItem = item;
+                            museumValid = true;
+                            break;
+                        }
+
+                        if (!museumValid) {
+                            if (dataItems.get(dataItems.size() - 1).equals(item)) {
+                                Toast.makeText(ScanQRActivity.this, "Museum not found", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                                finish();
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    Log.d(TAG, "onResponse: "+response.errorBody());
+                    dialog.dismiss();
+                }
+                
+            }
+
+            @Override
+            public void onFailure(Call<DataMuseum> call, Throwable t) {
+                Log.e("Retrofit Get", t.toString());
+                dialog.dismiss();
+            }
+        });
     }
 
     private void checkUser() {
         dialog.dismiss();
 
-
         if (user.getEmail().equals(mAuth.getCurrentUser().getEmail()))
-            startActivity(new Intent(ScanQRActivity.this, WelcomeActivity.class));
+            openWelcome();
         else
             scannerView.resumeCameraPreview(this);
 
     }
 
-    private void checkDb() {
-        dialog.show();
+    private void openWelcome() {
+        startActivity(new Intent(ScanQRActivity.this, WelcomeActivity.class)
+            .putExtra("_id", dataItem.getMuseumId())
+            .putExtra("name", dataItem.getNama()));
+    }
 
+    private void checkDb() {
         if (mAuth.getCurrentUser() != null) {
 
             db.collection("users").document(mAuth.getCurrentUser().getUid()).get()
