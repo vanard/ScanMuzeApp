@@ -68,6 +68,7 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         scannerView.setResultHandler(ScanQRActivity.this);
+                        scannerView.setAutoFocus(true);
                         scannerView.startCamera();
                     }
 
@@ -139,7 +140,7 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
 
 
         if (user.getEmail().equals(mAuth.getCurrentUser().getEmail()))
-            startActivity(new Intent(ScanQRActivity.this, MainActivity.class));
+            startActivity(new Intent(ScanQRActivity.this, WelcomeActivity.class));
         else
             scannerView.resumeCameraPreview(this);
 

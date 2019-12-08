@@ -1,8 +1,5 @@
 package com.vanard.muze;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +8,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,8 +29,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+public class WelcomeActivity extends AppCompatActivity {
+    private static final String TAG = "WelcomeActivity";
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_welcome);
 
         bindView();
         
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Check In", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WelcomeActivity.this, "Check In", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getData() {
+        dialog.show();
         db.collection("users").document(mAuth.getCurrentUser().getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -96,14 +97,13 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             user = task.getResult().toObject(DataUser.class);
 
+                            requestData();
                         } else {
                             Log.d(TAG, "onComplete: "+ task.getException());
                             dialog.dismiss();
                         }
                     }
                 });
-
-        requestData();
     }
 
     private void requestData() {
@@ -113,30 +113,24 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<DataMuseum> call, Response<DataMuseum>
                     response) {
                 List<DataItem> dataItems = response.body().getData();
-                if (dataItems.contains("id")) {
-                    setInitData(dataItems.get(0));
-                }
+                setInitData(dataItems.get(0));
             }
 
             @Override
             public void onFailure(Call<DataMuseum> call, Throwable t) {
                 Log.e("Retrofit Get", t.toString());
+                dialog.dismiss();
             }
         });
     }
 
     private void setInitData(DataItem dataItem) {
+        dialog.dismiss();
+
         nameView.setText(user.getName());
         museumView.setText(dataItem.getNama());
         descriptionView.setText(dataItem.getAlamatJalan());
 
-
-    }
-
-    private void checkUser(DataUser value) {
-        dialog.dismiss();
-
-        nameView.setText(value.getName());
 
     }
 }

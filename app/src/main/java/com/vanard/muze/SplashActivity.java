@@ -1,13 +1,10 @@
 package com.vanard.muze;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.google.firebase.auth.FirebaseAuth;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -24,7 +21,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                FirebaseAuth.getInstance().signOut();
+//                FirebaseAuth.getInstance().signOut();
 
                 Intent home = new Intent(SplashActivity.this, FirstActivity.class);
                 startActivity(home);
