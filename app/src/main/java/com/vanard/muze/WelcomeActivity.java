@@ -141,9 +141,15 @@ public class WelcomeActivity extends AppCompatActivity {
     private void setInitData(DataItem dataItem) {
         dialog.dismiss();
 
+        String description = dataItem.getAlamatJalan() + "\n Desa: " +
+                dataItem.getDesaKelurahan() + "\n Kecamatan: " +
+                dataItem.getKecamatan() + "\n Kabupaten: " +
+                dataItem.getKabupatenKota() + "\n Provinsi: " +
+                dataItem.getPropinsi();
+
         nameView.setText(user.getName());
         museumView.setText(dataItem.getNama());
-        descriptionView.setText(dataItem.getAlamatJalan());
+        descriptionView.setText(description);
 
 
     }
