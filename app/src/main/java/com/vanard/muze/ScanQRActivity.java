@@ -24,9 +24,9 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
-import com.vanard.muze.model.DataItem;
-import com.vanard.muze.model.DataMuseum;
 import com.vanard.muze.model.DataUser;
+import com.vanard.muze.model.museum.DataItem;
+import com.vanard.muze.model.museum.DataMuseum;
 import com.vanard.muze.network.RetrofitClient;
 import com.vanard.muze.network.RetrofitService;
 
@@ -70,7 +70,7 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
             getSupportActionBar().setTitle("Scan QR Code");
         }
 
-        retrofitClient = RetrofitClient.getRetrofitInstance().create(RetrofitService.class);
+        retrofitClient = RetrofitClient.getRetrofitInstance(RetrofitClient.BASE_URL).create(RetrofitService.class);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         dialog = new ProgressDialog(this);
@@ -225,13 +225,13 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
                             } else {
                                 Log.d(TAG, "onComplete: "+ task.getException());
                                 dialog.dismiss();
-                                startActivity(new Intent(ScanQRActivity.this, RegisterActivity.class));
+                                startActivity(new Intent(ScanQRActivity.this, AuthActivity.class));
                             }
                         }
                     });
         } else {
             dialog.dismiss();
-            startActivity(new Intent(ScanQRActivity.this, RegisterActivity.class));
+            startActivity(new Intent(ScanQRActivity.this, AuthActivity.class));
         }
     }
 }

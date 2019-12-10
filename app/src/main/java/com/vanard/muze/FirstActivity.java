@@ -2,26 +2,21 @@ package com.vanard.muze;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class FirstActivity extends AppCompatActivity {
     private static final String TAG = "FirstActivity";
 
     private ConstraintLayout layout;
     private Button scanBtn, registBtn, loginBtn;
+    private ImageView logoutBtn;
     private FirebaseAuth mAuth;
 
     private String password = "111000";
@@ -50,31 +45,26 @@ public class FirstActivity extends AppCompatActivity {
         registBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FirstActivity.this, RegisterActivity.class));
+                startActivity(new Intent(FirstActivity.this, AuthActivity.class)
+                        .putExtra("auth", "regist"));
             }
         });
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(FirstActivity.this, "On Development", Toast.LENGTH_SHORT).show();
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(FirstActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                startActivity(new Intent(FirstActivity.this, AuthActivity.class)
+                        .putExtra("auth", "login"));
+            }
+        });
 
-                            startActivity(new Intent(FirstActivity.this, SplashActivity.class));
-                            finish();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-
-                        }
-                    }
-                });
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                startActivity(new Intent(FirstActivity.this, SplashActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                finish();
             }
         });
     }
@@ -84,14 +74,25 @@ public class FirstActivity extends AppCompatActivity {
         scanBtn = findViewById(R.id.scan_qr_button);
         registBtn = findViewById(R.id.register_button);
         loginBtn = findViewById(R.id.login_button);
+        logoutBtn = findViewById(R.id.logout_button);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (mAuth.getCurrentUser() != null)
-            layout.setVisibility(View.GONE);
+            loggedInView(true);
         else
+            loggedInView(false);
+    }
+
+    private void loggedInView(boolean b) {
+        if (b) {
+            layout.setVisibility(View.GONE);
+            logoutBtn.setVisibility(View.VISIBLE);
+        } else {
             layout.setVisibility(View.VISIBLE);
+            logoutBtn.setVisibility(View.GONE);
+        }
     }
 }

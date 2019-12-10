@@ -1,4 +1,4 @@
-package com.vanard.muze.model;
+package com.vanard.muze.model.museum;
 
 import com.google.gson.annotations.SerializedName;
 

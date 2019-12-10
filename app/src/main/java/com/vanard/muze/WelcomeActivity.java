@@ -17,9 +17,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.vanard.muze.model.DataItem;
-import com.vanard.muze.model.DataMuseum;
 import com.vanard.muze.model.DataUser;
+import com.vanard.muze.model.museum.DataItem;
+import com.vanard.muze.model.museum.DataMuseum;
 import com.vanard.muze.network.RetrofitClient;
 import com.vanard.muze.network.RetrofitService;
 
@@ -75,7 +75,7 @@ public class WelcomeActivity extends AppCompatActivity {
         dialog.setMessage("Fetching data...");
         dialog.setCancelable(false);
 
-        retrofitClient = RetrofitClient.getRetrofitInstance().create(RetrofitService.class);
+        retrofitClient = RetrofitClient.getRetrofitInstance(RetrofitClient.BASE_URL).create(RetrofitService.class);
         
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -6,15 +6,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     private static Retrofit retrofit;
-    private static final String BASE_URL = "http://jendela.data.kemdikbud.go.id/api/index.php/CcariMuseum/";
+    public static final String BASE_URL = "http://jendela.data.kemdikbud.go.id/api/index.php/CcariMuseum/";
+    public static final String BASE_URL_RAJAAPI = "https://x.rajaapi.com/";
 
-    public static Retrofit getRetrofitInstance() {
+    public static Retrofit getRetrofitInstance(String url) {
         if (retrofit == null) {
             retrofit = new retrofit2.Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
         return retrofit;
+    }
+
+    public static void clearClient() {
+        retrofit = null;
     }
 }

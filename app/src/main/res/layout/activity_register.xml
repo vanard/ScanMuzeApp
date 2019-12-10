@@ -4,22 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    android:background="@color/colorFourth"
+    tools:context=".AuthActivity">
+
+    <TextView
+        android:id="@+id/title_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorThird"
+        android:padding="16dp"
+        android:text="Complete Your Profile"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/email_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:ems="10"
         android:gravity="center_horizontal"
         android:hint="Email"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
     <EditText
         android:id="@+id/name_input"
@@ -29,6 +45,8 @@
         android:ems="10"
         android:gravity="center_horizontal"
         android:hint="Name"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="@+id/email_input"
         app:layout_constraintStart_toStartOf="@+id/email_input"
@@ -44,6 +62,8 @@
         android:hint="KTP"
         android:inputType="number"
         android:maxLength="16"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="@+id/name_input"
         app:layout_constraintStart_toStartOf="@+id/name_input"
         app:layout_constraintTop_toBottomOf="@+id/name_input" />
@@ -58,6 +78,8 @@
         android:hint="NIM (Optional)"
         android:inputType="number"
         android:maxLength="14"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         app:layout_constraintEnd_toEndOf="@+id/ktp_input"
         app:layout_constraintStart_toStartOf="@+id/ktp_input"
         app:layout_constraintTop_toBottomOf="@+id/ktp_input" />
