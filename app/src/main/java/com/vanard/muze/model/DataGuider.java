@@ -8,6 +8,12 @@ public class DataGuider {
     public DataGuider() {
     }
 
+    public DataGuider(String name, String museum, String phoneNumber) {
+        this.name = name;
+        this.museum = museum;
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getName() {
         return name;
     }
