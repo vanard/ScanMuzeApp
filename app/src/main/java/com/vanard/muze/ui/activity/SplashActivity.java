@@ -1,10 +1,12 @@
-package com.vanard.muze;
+package com.vanard.muze.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.vanard.muze.R;
 
 public class SplashActivity extends AppCompatActivity {
 

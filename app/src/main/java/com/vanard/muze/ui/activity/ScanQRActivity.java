@@ -1,4 +1,4 @@
-package com.vanard.muze;
+package com.vanard.muze.ui.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -24,6 +24,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.vanard.muze.R;
 import com.vanard.muze.model.DataUser;
 import com.vanard.muze.model.museum.DataItem;
 import com.vanard.muze.model.museum.DataMuseum;
@@ -70,7 +71,8 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
             getSupportActionBar().setTitle("Scan QR Code");
         }
 
-        retrofitClient = RetrofitClient.getRetrofitInstance(RetrofitClient.BASE_URL).create(RetrofitService.class);
+        initRetrofit();
+
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         dialog = new ProgressDialog(this);
@@ -98,6 +100,11 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
                     }
                 })
             .check();
+    }
+
+    private void initRetrofit() {
+        RetrofitClient.clearClient();
+        retrofitClient = RetrofitClient.getRetrofitInstance(RetrofitClient.BASE_URL).create(RetrofitService.class);
     }
 
     private void bindView() {
@@ -158,7 +165,7 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
             @Override
             public void onResponse(Call<DataMuseum> call, Response<DataMuseum>
                     response) {
-
+                Log.d(TAG, "onResponse: " + response.body());
                 if (response.isSuccessful()) {
                     List<DataItem> dataItems = response.body().getData();
 
@@ -181,7 +188,9 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
                     }
                 }
                 else {
+                    Log.d(TAG, "onResponse: "+response.message());
                     Log.d(TAG, "onResponse: "+response.errorBody());
+
                     dialog.dismiss();
                 }
                 
@@ -225,13 +234,14 @@ public class ScanQRActivity extends AppCompatActivity implements ZXingScannerVie
                             } else {
                                 Log.d(TAG, "onComplete: "+ task.getException());
                                 dialog.dismiss();
-                                startActivity(new Intent(ScanQRActivity.this, AuthActivity.class));
+                                finish();
                             }
                         }
                     });
         } else {
             dialog.dismiss();
-            startActivity(new Intent(ScanQRActivity.this, AuthActivity.class));
+            startActivity(new Intent(ScanQRActivity.this, AuthActivity.class)
+                    .putExtra("auth", "regist"));
         }
     }
 }

@@ -1,7 +1,8 @@
-package com.vanard.muze;
+package com.vanard.muze.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -10,6 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.vanard.muze.R;
+import com.vanard.muze.model.rajaapi.AuthApi;
+import com.vanard.muze.network.RetrofitClient;
+import com.vanard.muze.network.RetrofitService;
+import com.vanard.muze.util.Preferences;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.vanard.muze.network.RetrofitClient.BASE_URL_RAJAAPI;
 
 public class FirstActivity extends AppCompatActivity {
     private static final String TAG = "FirstActivity";
@@ -34,6 +46,7 @@ public class FirstActivity extends AppCompatActivity {
 
     private void setUp() {
         mAuth = FirebaseAuth.getInstance();
+        reNewToken();
 
         scanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +75,7 @@ public class FirstActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mAuth.signOut();
+                Preferences.clearData(FirstActivity.this);
                 startActivity(new Intent(FirstActivity.this, SplashActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 finish();
@@ -94,5 +108,36 @@ public class FirstActivity extends AppCompatActivity {
             layout.setVisibility(View.VISIBLE);
             logoutBtn.setVisibility(View.GONE);
         }
+    }
+
+    private void requestToken() {
+        RetrofitService retrofit =  RetrofitClient.getRetrofitInstance(BASE_URL_RAJAAPI).create(RetrofitService.class);
+        Call<AuthApi> authToken = retrofit.getAuthToken();
+        authToken.enqueue(new Callback<AuthApi>() {
+            @Override
+            public void onResponse(Call<AuthApi> call, Response<AuthApi>
+                    response) {
+
+                if (response.isSuccessful()) {
+                    if (response.body().getSuccess()) {
+                        Preferences.setTokenUser(FirstActivity.this, response.body().getToken());
+                    }
+                }
+                else {
+                    Log.d(TAG, "onResponse: "+response.errorBody());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<AuthApi> call, Throwable t) {
+                Log.e("Retrofit Get", t.toString());
+            }
+        });
+    }
+
+    private void reNewToken() {
+        Preferences.clearData(FirstActivity.this);
+        requestToken();
     }
 }

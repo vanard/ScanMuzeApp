@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorFourth"
     android:paddingBottom="24dp"
-    tools:context=".FirstActivity">
+    tools:context=".ui.activity.FirstActivity">
 
     <Button
         android:id="@+id/scan_qr_button"

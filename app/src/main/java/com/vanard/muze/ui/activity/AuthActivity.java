@@ -1,4 +1,4 @@
-package com.vanard.muze;
+package com.vanard.muze.ui.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -22,6 +22,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.vanard.muze.R;
 import com.vanard.muze.model.DataUser;
 import com.vanard.muze.model.rajaapi.AuthApi;
 import com.vanard.muze.model.rajaapi.ResponseApi;
@@ -74,6 +75,8 @@ public class AuthActivity extends AppCompatActivity {
         initClient();
         mAuth = FirebaseAuth.getInstance();
         dataUser = new DataUser();
+
+        checkToken();
         
         if (getIntent() != null) 
             authType = getIntent().getStringExtra("auth");
@@ -147,10 +150,11 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuthApi> call, Response<AuthApi>
                     response) {
+                Log.d(TAG, "onResponse: " + response.body().getToken());
 
                 if (response.isSuccessful()) {
                     if (!response.body().getSuccess()) {
-                        Preferences.clearTokenUser(AuthActivity.this);
+                        Preferences.clearData(AuthActivity.this);
                         requestToken();
 
                     }
@@ -170,6 +174,8 @@ public class AuthActivity extends AppCompatActivity {
         });
     }
 
+
+
     private void getProvince() {
         Call<ResponseApi> dataProvince = retrofit.getProvince(token);
         dataProvince.enqueue(new Callback<ResponseApi>() {
@@ -178,7 +184,6 @@ public class AuthActivity extends AppCompatActivity {
                     response) {
 
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: " + response.body().getSuccess());
                     if (response.body().getSuccess()) {
                         List<ResponseApi.Data> dataItem = response.body().getData();
                         for (ResponseApi.Data item: dataItem) {
@@ -193,7 +198,8 @@ public class AuthActivity extends AppCompatActivity {
                         }
 
 
-                    }
+                    } else
+                        Toast.makeText(AuthActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
 
                 }
                 else {
@@ -232,7 +238,8 @@ public class AuthActivity extends AppCompatActivity {
                                 Toast.makeText(AuthActivity.this, "Number KTP is not valid", Toast.LENGTH_SHORT).show();
                         }
 
-                    }
+                    }else
+                        Toast.makeText(AuthActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Log.d(TAG, "onResponse: "+response.errorBody());
@@ -280,7 +287,8 @@ public class AuthActivity extends AppCompatActivity {
                                 Toast.makeText(AuthActivity.this, "Number KTP is not valid", Toast.LENGTH_SHORT).show();
                         }
 
-                    }
+                    }else
+                        Toast.makeText(AuthActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
 
                 }
                 else {
@@ -309,8 +317,6 @@ public class AuthActivity extends AppCompatActivity {
         dataUser.setDistrict(mDistrict);
         dataUser.setSubDistrict(mSubDistrict);
 
-        Log.d(TAG, "doRegist: " + dataUser);
-
         mAuth.createUserWithEmailAndPassword(dataUser.getEmail(), password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -324,7 +330,7 @@ public class AuthActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-
+                            dialog.dismiss();
                         }
 
                     }
@@ -337,8 +343,6 @@ public class AuthActivity extends AppCompatActivity {
             showMsg("Email is not valid");
             return;
         }
-
-        checkToken();
 
         dialog.show();
 
@@ -388,8 +392,6 @@ public class AuthActivity extends AppCompatActivity {
             showMsg("Name must have at least 3 character");
             return;
         }
-
-        checkToken();
 
         dialog.show();
 

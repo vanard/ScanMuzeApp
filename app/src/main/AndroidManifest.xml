@@ -16,27 +16,33 @@
         android:roundIcon="@mipmap/icon_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoAction">
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".AuthActivity" />
-        <activity
-            android:name=".ScanQRActivity"
-            android:parentActivityName=".FirstActivity"
-            android:theme="@style/AppTheme.NoAction">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FirstActivity" />
-        </activity>
-        <activity
-            android:name=".SplashActivity"
-            android:theme="@style/AppTheme.NoAction">
+        <activity android:name=".ui.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FirstActivity" />
-        <activity android:name=".WelcomeActivity" />
+        <activity android:name=".ui.activity.AuthActivity" />
+        <activity
+            android:name=".ui.activity.ScanQRActivity"
+            android:parentActivityName=".ui.activity.FirstActivity"
+            android:theme="@style/AppTheme.NoAction">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activity.FirstActivity" />
+        </activity>
+        <activity
+            android:name=".ui.activity.SplashActivity"
+            android:theme="@style/AppTheme.NoAction">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity android:name=".ui.activity.FirstActivity" />
+        <activity android:name=".ui.activity.WelcomeActivity" />
     </application>
 
 </manifest>

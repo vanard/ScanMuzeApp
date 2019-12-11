@@ -1,27 +1,32 @@
-package com.vanard.muze;
+package com.vanard.muze.ui.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.vanard.muze.R;
 import com.vanard.muze.model.DataUser;
 import com.vanard.muze.model.museum.DataItem;
 import com.vanard.muze.model.museum.DataMuseum;
+import com.vanard.muze.model.museum.MuseumCheckIn;
 import com.vanard.muze.network.RetrofitClient;
 import com.vanard.muze.network.RetrofitService;
+import com.vanard.muze.util.Preferences;
 
 import java.util.List;
 
@@ -42,6 +47,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private RetrofitService retrofitClient;
     private ProgressDialog dialog;
     private DataUser user;
+    private MuseumCheckIn museumCheckIn;
     private String museumId, museumName;
 
     @Override
@@ -76,13 +82,66 @@ public class WelcomeActivity extends AppCompatActivity {
         dialog.setCancelable(false);
 
         retrofitClient = RetrofitClient.getRetrofitInstance(RetrofitClient.BASE_URL).create(RetrofitService.class);
-        
+
+        updateDataMuseum();
+
         checkinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(WelcomeActivity.this, "Check In", Toast.LENGTH_SHORT).show();
+                checkInMuseum();
             }
         });
+    }
+
+    private void updateDataMuseum() {
+        db.collection("museum").document(museumId).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            museumCheckIn = task.getResult().toObject(MuseumCheckIn.class);
+
+                        } else
+                            Log.d(TAG, "onComplete: "+ task.getException());
+
+                    }
+                });
+    }
+
+    private void checkInMuseum() {
+        dialog.show();
+
+        MuseumCheckIn newInput;
+        if (museumCheckIn != null)
+            newInput = new MuseumCheckIn(museumCheckIn.getCountCheckIn() + 1, museumName);
+        else
+            newInput = new MuseumCheckIn(1L, museumName);
+
+        db.collection("museum").document(museumId)
+                .set(newInput)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        dialog.dismiss();
+                        openMain();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                        dialog.dismiss();
+                    }
+                });
+    }
+
+    private void openMain() {
+        Preferences.setMuseumUser(WelcomeActivity.this, museumId, museumName);
+        startActivity(new Intent(WelcomeActivity.this, MainActivity.class)
+                .putExtra("_id", museumId)
+                .putExtra("name", museumName)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        finish();
     }
 
     @Override
@@ -120,13 +179,15 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onResponse(Call<DataMuseum> call, Response<DataMuseum>
                     response) {
                 List<DataItem> dataItems = response.body().getData();
-//                Log.d(TAG, "onResponse: "+dataItems);
-                for (DataItem item: dataItems) {
-                    if (item.getMuseumId().equals(museumId)) {
-                        setInitData(item);
-                        break;
+                if (dataItems != null) {
+                    for (DataItem item : dataItems) {
+                        if (item.getMuseumId().equals(museumId)) {
+                            setInitData(item);
+                            break;
+                        }
                     }
-                }
+                } else
+                    Log.d(TAG, "onResponse: null");
 
             }
 
@@ -140,12 +201,23 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void setInitData(DataItem dataItem) {
         dialog.dismiss();
+        String description;
 
-        String description = dataItem.getAlamatJalan() + "\n Desa: " +
-                dataItem.getDesaKelurahan() + "\n Kecamatan: " +
-                dataItem.getKecamatan() + "\n Kabupaten: " +
-                dataItem.getKabupatenKota() + "\n Provinsi: " +
-                dataItem.getPropinsi();
+        if (dataItem.getTahunBerdiri().equals("0")) {
+            description = dataItem.getAlamatJalan() + "\n Desa: " +
+                    dataItem.getDesaKelurahan() + "\n Kecamatan: " +
+                    dataItem.getKecamatan() + "\n Kabupaten: " +
+                    dataItem.getKabupatenKota() + "\n Provinsi: " +
+                    dataItem.getPropinsi();
+        }
+        else {
+            description = dataItem.getAlamatJalan() + "\n Desa: " +
+                    dataItem.getDesaKelurahan() + "\n Kecamatan: " +
+                    dataItem.getKecamatan() + "\n Kabupaten: " +
+                    dataItem.getKabupatenKota() + "\n Provinsi: " +
+                    dataItem.getPropinsi() + "\n Berdiri Tahun: " +
+                    dataItem.getTahunBerdiri();
+        }
 
         nameView.setText(user.getName());
         museumView.setText(dataItem.getNama());
