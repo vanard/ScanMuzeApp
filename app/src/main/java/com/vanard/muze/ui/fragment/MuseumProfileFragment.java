@@ -52,7 +52,7 @@ public class MuseumProfileFragment extends Fragment {
 
         dialog = new ProgressDialog(requireContext());
         dialog.setMessage("Fetching data...");
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
 
         museumId = Preferences.getMuseumId(requireContext());
         museumName = Preferences.getMuseumName(requireContext());
@@ -75,6 +75,7 @@ public class MuseumProfileFragment extends Fragment {
     }
 
     private void requestData() {
+        dialog.show();
         Call<DataMuseum> museumCall = retrofitClient.getSearchMuseumByName(museumName);
         museumCall.enqueue(new Callback<DataMuseum>() {
             @Override
@@ -93,6 +94,7 @@ public class MuseumProfileFragment extends Fragment {
                 } else
                     Log.d(TAG, "onResponse: null");
 
+                dialog.dismiss();
             }
 
             @Override

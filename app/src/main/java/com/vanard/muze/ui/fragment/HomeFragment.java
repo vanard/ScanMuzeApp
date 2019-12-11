@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         dialog = new ProgressDialog(requireContext());
         dialog.setMessage("Fetching data...");
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
 
         return view;
     }
@@ -81,6 +81,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void getData() {
+        dialog.show();
         Query a = db.collection("museum").orderBy("countCheckIn", Query.Direction.DESCENDING).limit(5);
         a.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -98,6 +99,8 @@ public class HomeFragment extends Fragment {
                         homeRecyclerViewAdapter.addItem(museumCheckIn);
                     }
                 }
+
+                dialog.dismiss();
 
             }
         });

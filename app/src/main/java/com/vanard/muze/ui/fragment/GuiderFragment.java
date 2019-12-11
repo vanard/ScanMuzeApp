@@ -59,7 +59,7 @@ public class GuiderFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         dialog = new ProgressDialog(requireContext());
         dialog.setMessage("Fetching data...");
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
 
         museumName = Preferences.getMuseumName(requireContext());
 
@@ -83,6 +83,7 @@ public class GuiderFragment extends Fragment {
     }
 
     private void getData() {
+        dialog.show();
         db.collection("guiders").whereEqualTo("museum", museumName).get()
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -93,8 +94,10 @@ public class GuiderFragment extends Fragment {
                             if (dataGuider != null)
                                 guiderRecyclerViewAdapter.addItem(dataGuider);
                         }
+                        dialog.dismiss();
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
+                        dialog.dismiss();
                     }
                 }
             });
